@@ -39,7 +39,7 @@ public class ThirdPersoneMovement : MonoBehaviour
         {
             surface.BuildNavMesh();
         }
-            Eventualmente più in là
+            Eventualmente piï¿½ in lï¿½
             if (Input.GetKeyDown(KeyCode.F2))
             {
                 if (cameraAxis >= 1f)
@@ -75,7 +75,7 @@ public class ThirdPersoneMovement : MonoBehaviour
                 }
             }*/
 
-        //perché il character controller non applica la gravità
+        //perchï¿½ il character controller non applica la gravitï¿½
 
 
         //movimento con mouse

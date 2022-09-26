@@ -6,23 +6,26 @@ using UnityEngine.AI;
 
 public class Rotation : MonoBehaviour
 {
-    public GameObject wall;
-    public GameObject pillar;
-
-    public TextMeshProUGUI scoreText;
-
-    public NavMeshSurface navMesh;
-    public Material activated;
-    public AudioSource collectedKey;
-
-    // Update is called once per frame
-    void Update()
+    [SerializeField] private string id;
+    [ContextMenu("Generate guid for id")]
+    private void GenerateGuid()
     {
+        id = System.Guid.NewGuid().ToString();
+    }
+
+    public AudioSource collectedKey;
+    private void Update()
+    {
+        if (DungeonObject.instance.getStateOfKey(id))
+        {
+            Destroy(this.gameObject);
+        }
         transform.Rotate(0, .5f, 0);
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        /*
         Destroy(wall);
         pillar.GetComponent<MeshRenderer>().material = activated;
 
@@ -30,6 +33,8 @@ public class Rotation : MonoBehaviour
         scoreText.text = ": " + CharacterStats.instance.key;
         
         CharacterStats.instance.hasKeys(1);
+        */
+        DungeonObject.instance.setStateOfKey(id);
         collectedKey.Play();
         Destroy(this.gameObject);
         //navMesh.BuildNavMesh();
