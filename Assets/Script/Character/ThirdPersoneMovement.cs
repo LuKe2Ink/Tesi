@@ -6,6 +6,7 @@ using Cinemachine;
 
 public class ThirdPersoneMovement : MonoBehaviour
 {
+    public static ThirdPersoneMovement instance;
     public CharacterController controller;
     public Camera camera;
     public CinemachineFreeLook cameraPlayer;
@@ -21,6 +22,10 @@ public class ThirdPersoneMovement : MonoBehaviour
 
     public Terrain terrain;
 
+    private void Awake()
+    {
+        instance = this;
+    }
     void Start()
     {
         terrain.GetComponent<TerrainCollider>().enabled = false;
@@ -35,6 +40,22 @@ public class ThirdPersoneMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //per schivare il boss
+        if (Input.anyKeyDown)
+        {
+            if (Boss.instance)
+            {
+                if (Input.GetKeyDown(KeyCode.Q))
+                    Boss.instance.DodgeAttack(KeyCode.Q);
+
+                if (Input.GetKeyDown(KeyCode.W))
+                    Boss.instance.DodgeAttack(KeyCode.Q);
+
+                if (Input.GetKeyDown(KeyCode.A))
+                    Boss.instance.DodgeAttack(KeyCode.Q);
+            }
+        }
+
         /*if (Input.GetKeyDown(KeyCode.R))
         {
             surface.BuildNavMesh();

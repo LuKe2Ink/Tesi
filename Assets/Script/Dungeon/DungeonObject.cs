@@ -27,7 +27,7 @@ public class DungeonObject : MonoBehaviour, IDataPersistance
     public void ClearThePath()
     {
         scoreText.text = ": " + this.keysGet;
-        if (keysGet == 3)
+        if (keysGet == 1)
         {
             ClearPath.instance.AllKeyGet();
         }
