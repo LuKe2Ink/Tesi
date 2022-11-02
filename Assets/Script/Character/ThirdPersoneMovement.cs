@@ -12,6 +12,9 @@ public class ThirdPersoneMovement : MonoBehaviour
     public CinemachineFreeLook cameraPlayer;
     public NavMeshAgent agent;
     public NavMeshSurface surface;
+    public GameObject inventory;
+    private Animator animator;
+
 
     public float speed = 6f;
     public float rotationspeed = 6f;
@@ -35,6 +38,8 @@ public class ThirdPersoneMovement : MonoBehaviour
         cameraAxis = 1f;
         cameraMouse = true;
         cameraPlayer.m_YAxis.Value = cameraAxis;
+
+        animator = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -43,18 +48,51 @@ public class ThirdPersoneMovement : MonoBehaviour
         //per schivare il boss
         if (Input.anyKeyDown)
         {
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                inventory.SetActive(!inventory.active);
+            }
             if (Boss.instance)
             {
                 if (Input.GetKeyDown(KeyCode.Q))
                     Boss.instance.DodgeAttack(KeyCode.Q);
 
                 if (Input.GetKeyDown(KeyCode.W))
-                    Boss.instance.DodgeAttack(KeyCode.Q);
+                    Boss.instance.DodgeAttack(KeyCode.W);
 
                 if (Input.GetKeyDown(KeyCode.A))
-                    Boss.instance.DodgeAttack(KeyCode.Q);
+                    Boss.instance.DodgeAttack(KeyCode.A);
             }
         }
+
+        //movimento con mouse
+
+        if (!inventory.active)
+        {
+            if (Input.GetMouseButtonDown(0) && cameraMouse)
+            {
+                Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit))
+                {
+                    agent.SetDestination(hit.point);
+                }
+
+            }
+        }
+        
+        if(agent.remainingDistance > agent.stoppingDistance)
+        {
+            animator.SetBool("Walking", true);
+        }else
+        {
+            animator.SetBool("Walking", false);
+        }
+    }
+}
+
+
 
         /*if (Input.GetKeyDown(KeyCode.R))
         {
@@ -99,18 +137,3 @@ public class ThirdPersoneMovement : MonoBehaviour
         //perch� il character controller non applica la gravit�
 
 
-        //movimento con mouse
-
-        if (Input.GetMouseButtonDown(0) && cameraMouse)
-        {
-            Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if(Physics.Raycast(ray, out hit))
-            {
-                agent.SetDestination(hit.point);
-            }
-
-        }
-    }
-}
