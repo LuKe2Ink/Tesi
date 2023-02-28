@@ -8,6 +8,7 @@ public class FallingDamage : MonoBehaviour
     {
         if(other.gameObject.name == "Player")
         {
+            Player.instance.HealthDown();
             Debug.Log("Preso");
             Boss.instance.DestroyAllRocks();
         }

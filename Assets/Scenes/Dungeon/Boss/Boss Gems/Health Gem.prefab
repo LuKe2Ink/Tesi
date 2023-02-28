@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 311816034873577313}
   - component: {fileID: 339632842305630283}
   - component: {fileID: -8661826147661049312}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Health Gem
   m_TagString: Untagged
   m_Icon: {fileID: 0}

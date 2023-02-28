@@ -18,7 +18,6 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
             keys.Add(pair.Key);
             values.Add(pair.Value);
         }
-
     }
 
     //carica il dictionary dalla lista
@@ -34,6 +33,5 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IS
         {
             this.Add(keys[i], values[i]);
         }
-
     }
 }

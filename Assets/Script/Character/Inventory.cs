@@ -5,23 +5,27 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
     public static Inventory instance;
-    private Dictionary<string, int> items;
-    public string prova = "prova"; 
+    private List<string> items;
+    //public string obj = "prova"; 
     private void Awake()
     {
-        instance = this;
-        items = new Dictionary<string, int>();
-        items.Add(prova, 0);
-        addItem(prova);
+        if (instance != null && instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            instance = this;
+        }
+        items = new List<string>(); 
+
+        //items.Add(obj, 0);
+        //addItem(prova);
     }
 
-    public void addItem(string item)
+    public void AddItem(string item)
     {
-        items.TryGetValue(item, out int value);
-        if(value >= 0)
-        {
-            items[item] += 1; 
-        }
-        Debug.Log(items[prova]);
+        items.Add(item);
+        //Debug.Log(items[prova]);
     }
 }

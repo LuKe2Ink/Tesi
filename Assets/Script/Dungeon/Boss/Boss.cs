@@ -37,14 +37,14 @@ public class Boss : MonoBehaviour
 
     private void Awake()
     {
-        health = maxHealth;
+        health = maxHealth; //maxHealth;
         Debug.Log(health);
         instance = this;
     }
 
     void Start()
     {
-        Debug.Log(ThirdPersoneMovement.instance.transform.position.z);
+        //Debug.Log(Character.instance.transform.position.z);
         animator = GetComponentInChildren<Animator>();
     }
 
@@ -59,21 +59,17 @@ public class Boss : MonoBehaviour
                 if (Time.time > heavyAttackTime)
                 {
                     Destroy(heavyAttackArea);
-                    if (counter)
-                    {
-                        Debug.Log("Hai schivato bravo");
-                    }
-                    else
-                    {
-                        Debug.Log("Non hai schivato");
-                    }
+                    if (!counter)
+                        Player.instance.HealthDown();
                     heavyAttackIncoming = false;
                     lastHeavy = Time.time + timerHeavy;
                     lastNormal = Time.time + timerNormal;
+                    counter = false;
                 }
             }
-            if (ThirdPersoneMovement.instance.transform.position.z > 200)
+            if (Player.instance.transform.position.z > 205)
             {
+                ClearPath.instance.ActiveWalls(true);
                 healthBar.SetActive(true);
                 bossOperative = true;
                 //Debug.Log(Time.time);
@@ -101,7 +97,7 @@ public class Boss : MonoBehaviour
                     if (!attack.Contains("heavy"))
                         attack.Add("heavy");
 
-                    rand = Random.Range(0, 3);
+                    rand = Random.Range(0, 4);
                     Debug.Log(rand);
                     heavyAttackArea = Instantiate(attackArea, transform.position, Quaternion.identity);
                     heavyAttackIncoming = true;
@@ -143,7 +139,15 @@ public class Boss : MonoBehaviour
             }
         } else
         {
-            Debug.Log("Bravo Lo hai sconfitto");
+            Destroy(slider.gameObject);
+            ClearPath.instance.ActiveWalls(true);
+            this.gameObject.AddComponent<Rigidbody>();
+            Debug.Log("Hai Sconfitto il boss");
+        }
+
+        if(this.transform.position.y < -5)
+        {
+            Destroy(this.gameObject);
         }
         
 
@@ -157,8 +161,8 @@ public class Boss : MonoBehaviour
 
         //spawn sul giocatore
         Vector3 playerPosition = new Vector3
-            (ThirdPersoneMovement.instance.transform.position.x,
-                15, ThirdPersoneMovement.instance.transform.position.z);
+            (Player.instance.transform.position.x,
+                15, Player.instance.transform.position.z);
         CreateFallingRocks(playerPosition);
 
         for (int i=0; i<2; i++)
@@ -224,45 +228,20 @@ public class Boss : MonoBehaviour
 
     public void DodgeAttack(KeyCode keyPressed)
     {
-        //dopo il testing sostituire con un if
-        if (bossOperative && heavyAttackIncoming)
+        switch (rand)
         {
-            switch (rand)
-            {
-                case 0:
-                    counter = keyPressed == KeyCode.Q;
-                    if (counter)
-                    {
-                        Debug.Log("bravo");
-                    }
-                    else
-                    {
-                        Debug.Log("coglione");
-                    }
-                    break;
-                case 1:
-                    counter = keyPressed == KeyCode.W;
-                    if (counter)
-                    {
-                        Debug.Log("bravo");
-                    }
-                    else
-                    {
-                        Debug.Log("coglione");
-                    }
-                    break;
-                case 2:
-                    counter = keyPressed == KeyCode.A;
-                    if (counter)
-                    {
-                        Debug.Log("bravo");
-                    }
-                    else
-                    {
-                        Debug.Log("coglione");
-                    }
-                    break;
-            }
+            case 0:
+                counter = (keyPressed == KeyCode.Q);
+                break;
+            case 1:
+                counter = (keyPressed == KeyCode.W);
+                break;
+            case 2:
+                counter = (keyPressed == KeyCode.A);
+                break;
+            case 3:
+                counter = (keyPressed == KeyCode.S);
+                break;
         }
     }
 
@@ -270,5 +249,10 @@ public class Boss : MonoBehaviour
     {
         if(health > 0)
             health--;
+    }
+
+    public bool BossOperativeAndAttack()
+    {
+        return this.bossOperative && this.heavyAttackIncoming;
     }
 }

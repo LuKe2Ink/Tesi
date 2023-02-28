@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Cinemachine;
+using TMPro;
+using UnityEngine.UI;
 
-public class ThirdPersoneMovement : MonoBehaviour
+public class Player : MonoBehaviour
 {
-    public static ThirdPersoneMovement instance;
+    public static Player instance;
     public CharacterController controller;
     public Camera camera;
     public CinemachineFreeLook cameraPlayer;
@@ -14,7 +16,11 @@ public class ThirdPersoneMovement : MonoBehaviour
     public NavMeshSurface surface;
     public GameObject inventory;
     private Animator animator;
+    public Transform content;
+    public GameObject itemInvetory;
 
+    private int health = 3;
+    private bool cutsceneFinished = false;
 
     public float speed = 6f;
     public float rotationspeed = 6f;
@@ -31,6 +37,13 @@ public class ThirdPersoneMovement : MonoBehaviour
     }
     void Start()
     {
+        if (MovingLight.instance == null)
+            this.cutsceneFinished = true;
+
+        for(int i=0; i<health; i++)
+        {
+            Instantiate(itemInvetory, content);
+        }
         terrain.GetComponent<TerrainCollider>().enabled = false;
 
         terrain.GetComponent<TerrainCollider>().enabled = true;
@@ -45,50 +58,86 @@ public class ThirdPersoneMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //per schivare il boss
-        if (Input.anyKeyDown)
+        if (this.cutsceneFinished)
         {
-            if (Input.GetKeyDown(KeyCode.Tab))
+            //per schivare il boss
+            if (Boss.instance != null && Boss.instance.BossOperativeAndAttack())
             {
-                inventory.SetActive(!inventory.active);
-            }
-            if (Boss.instance)
-            {
-                if (Input.GetKeyDown(KeyCode.Q))
-                    Boss.instance.DodgeAttack(KeyCode.Q);
-
-                if (Input.GetKeyDown(KeyCode.W))
-                    Boss.instance.DodgeAttack(KeyCode.W);
-
-                if (Input.GetKeyDown(KeyCode.A))
-                    Boss.instance.DodgeAttack(KeyCode.A);
-            }
-        }
-
-        //movimento con mouse
-
-        if (!inventory.active)
-        {
-            if (Input.GetMouseButtonDown(0) && cameraMouse)
-            {
-                Ray ray = camera.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit))
+                //Debug.Log("ci entra1");
+                if (Input.anyKeyDown)
                 {
-                    agent.SetDestination(hit.point);
-                }
+                    //Debug.Log("ci entra2");
+                    if (Input.GetKeyDown(KeyCode.Tab))
+                    {
+                        inventory.SetActive(!inventory.active);
+                    }
+                    if (Boss.instance)
+                    {
+                        if (Input.GetKeyDown(KeyCode.Q))
+                            Boss.instance.DodgeAttack(KeyCode.Q);
 
+                        if (Input.GetKeyDown(KeyCode.W))
+                            Boss.instance.DodgeAttack(KeyCode.W);
+
+                        if (Input.GetKeyDown(KeyCode.A))
+                            Boss.instance.DodgeAttack(KeyCode.A);
+
+                        if (Input.GetKeyDown(KeyCode.S))
+                            Boss.instance.DodgeAttack(KeyCode.S);
+                    }
+                }
+            }
+
+            //movimento con mouse
+
+            if (!inventory.active)
+            {
+                if (Input.GetMouseButtonDown(0) && cameraMouse)
+                {
+                    //Debug.Log(Input.mousePosition);
+                    Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+                    RaycastHit hit;
+
+                    if (Physics.Raycast(ray, out hit))
+                    {
+                        //Debug.Log(hit.point);
+                        agent.SetDestination(new Vector3(hit.point.x, 0f, hit.point.z));
+                    }
+
+                }
+            }
+
+            if (agent.remainingDistance > agent.stoppingDistance)
+            {
+                animator.SetBool("Walking", true);
+            }
+            else
+            {
+                animator.SetBool("Walking", false);
             }
         }
-        
-        if(agent.remainingDistance > agent.stoppingDistance)
-        {
-            animator.SetBool("Walking", true);
-        }else
-        {
-            animator.SetBool("Walking", false);
-        }
+    }
+
+    public void HealthUp()
+    { 
+        Instantiate(itemInvetory, content);
+        this.health++;
+    }
+    public void HealthDown()
+    {
+        var item = content.GetChild(0);
+        Destroy(item.gameObject);
+        IsDead();
+    }
+    public void IsDead()
+    {
+        if (health == 0)
+            Debug.Log("Game Over");
+    }
+
+    public void FinishedCutscene()
+    {
+        this.cutsceneFinished = true;
     }
 }
 

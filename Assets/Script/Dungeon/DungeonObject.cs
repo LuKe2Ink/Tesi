@@ -7,6 +7,7 @@ public class DungeonObject : MonoBehaviour, IDataPersistance
 {
     public static DungeonObject instance;
     public TextMeshProUGUI scoreText;
+    public int totalKeys;
     private int keysGet = 0;
     private Dictionary<string, bool> dungeonKeys;
 
@@ -15,34 +16,27 @@ public class DungeonObject : MonoBehaviour, IDataPersistance
         instance = this;
         this.dungeonKeys = new Dictionary<string, bool>();
         this.dungeonKeys.Add("dcfb53be-f995-413c-8d63-33b3febeec23", false);
-        /*
-         * per le altre chiavi
-         this.dungeonKeys["dcfb53be-f995-413c-8d63-33b3febeec23"] = false;
-         this.dungeonKeys["dcfb53be-f995-413c-8d63-33b3febeec23"] = false;
-        */
-
-        //DontDestroyOnLoad(this.gameObject);
+        this.dungeonKeys.Add("3be90377-fde2-40e3-b9a2-9839783a7d21", false);
+        this.dungeonKeys.Add("8330c3bc-622f-4ae8-972d-5686b59452b7", false);
     }
 
     public void ClearThePath()
     {
         scoreText.text = ": " + this.keysGet;
-        if (keysGet == 1)
+        if (keysGet == totalKeys)
         {
             ClearPath.instance.AllKeyGet();
         }
     }
 
-    public void setStateOfKey(string id)
+    public void SetStateOfKey(string id)
     {
         this.keysGet++;
         this.dungeonKeys[id] = true;
         ClearThePath();
     }
-    public bool getStateOfKey(string id)
+    public bool GetStateOfKey(string id)
     {
-        //Debug.Log(keys);
-        //return keys[id];
         return dungeonKeys[id];
     }
 
@@ -61,7 +55,6 @@ public class DungeonObject : MonoBehaviour, IDataPersistance
             }
         }
         ClearThePath();
-        //Debug.Log(keys);
     }
 
     public void SaveData(ref GameData data)
